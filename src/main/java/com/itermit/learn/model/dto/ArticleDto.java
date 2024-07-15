@@ -1,5 +1,6 @@
 package com.itermit.learn.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
@@ -12,6 +13,7 @@ import java.time.Instant;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Relation(itemRelation = "article", collectionRelation = "articles")
 public class ArticleDto extends RepresentationModel<ArticleDto> {
 

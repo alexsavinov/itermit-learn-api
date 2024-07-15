@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+
 @Component
 public class ArticlesDto extends RepresentationModelAssemblerSupport<Article, ArticleDto> {
 
@@ -21,7 +22,7 @@ public class ArticlesDto extends RepresentationModelAssemblerSupport<Article, Ar
 
     @Override
     public ArticleDto toModel(Article entity) {
-        ArticleDto articleDto = articleMapper.toDto(entity);
+        ArticleDto articleDto = articleMapper.toBasicDto(entity);
         articleDto.add(linkTo(methodOn(ArticleController.class).getArticleById(articleDto.getId())).withSelfRel());
         return articleDto;
     }

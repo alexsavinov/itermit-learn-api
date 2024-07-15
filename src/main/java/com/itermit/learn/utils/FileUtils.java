@@ -15,6 +15,7 @@ import java.util.Optional;
 
 import static java.util.Optional.ofNullable;
 
+
 @Slf4j
 @Component
 @Getter
@@ -28,6 +29,9 @@ public class FileUtils {
 
     @Value("${app.articleImagePath}")
     private String articleImagePath;
+
+    @Value("${app.questionImagePath}")
+    private String questionImagePath;
 
     public Optional<String> getExtension(String filename) {
         return ofNullable(filename)
@@ -86,5 +90,9 @@ public class FileUtils {
 
     public String saveArticleImage(MultipartFile multipartFile) {
         return saveToStaticFolder(multipartFile, getArticleImagePath());
+    }
+
+    public String saveQuestionImage(MultipartFile multipartFile) {
+        return saveToStaticFolder(multipartFile, getQuestionImagePath());
     }
 }

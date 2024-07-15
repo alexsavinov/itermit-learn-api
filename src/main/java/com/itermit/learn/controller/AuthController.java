@@ -1,6 +1,5 @@
 package com.itermit.learn.controller;
 
-
 import com.itermit.learn.config.jwt.JwtUtils;
 import com.itermit.learn.exception.RefreshTokenNotFoundException;
 import com.itermit.learn.model.dto.request.*;
@@ -33,6 +32,7 @@ import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 
 @RestController
 @RequestMapping("/auth")
@@ -124,7 +124,9 @@ public class AuthController {
                     String token = jwtUtils.generateTokenFromUser(user);
                     return new TokenRefreshResponse(token, requestRefreshToken);
                 })
-                .orElseThrow(() -> new RefreshTokenNotFoundException(requestRefreshToken,
-                        "Refresh token is not in database!"));
+                .orElseThrow(() -> new RefreshTokenNotFoundException(
+                        requestRefreshToken,
+                        "Refresh token is not in database!"
+                ));
     }
 }

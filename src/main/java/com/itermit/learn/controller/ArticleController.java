@@ -39,15 +39,14 @@ public class ArticleController {
         ArticleDto articleDto = articleMapper.toDto(foundArticle);
 
         articleDto.add(linkTo(methodOn(ArticleController.class).getArticleById(articleDto.getId())).withSelfRel());
-        articleDto.add(linkTo(methodOn(ArticleController.class).getArticles(null, null)).withRel("collection"));
         return articleDto;
     }
 
     @GetMapping
     public PagedModel<ArticleDto> getArticles(
             Pageable pageable,
-            @RequestParam(required = false) String search) {
-        Page<Article> foundArticles = articleService.findAll(pageable, search);
+            @RequestParam(required = false) Map<String, String> params) {
+        Page<Article> foundArticles = articleService.findAll(pageable, params);
 
         return pagedResourcesAssembler.toModel(foundArticles, articlesDto);
     }
@@ -59,7 +58,6 @@ public class ArticleController {
         ArticleDto articleDto = articleMapper.toDto(createdArticle);
 
         articleDto.add(linkTo(methodOn(ArticleController.class).addArticle(createRequest)).withSelfRel());
-        articleDto.add(linkTo(methodOn(ArticleController.class).getArticles(null, null)).withRel("collection"));
         return articleDto;
     }
 
@@ -69,7 +67,6 @@ public class ArticleController {
         ArticleDto articleDto = articleMapper.toDto(updatedArticle);
 
         articleDto.add(linkTo(methodOn(ArticleController.class).updateArticle(updateRequest)).withSelfRel());
-        articleDto.add(linkTo(methodOn(ArticleController.class).getArticles(null, null)).withRel("collection"));
         return articleDto;
     }
 

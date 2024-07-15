@@ -5,6 +5,7 @@ import com.itermit.learn.model.dto.request.UpdateArticleRequest;
 import com.itermit.learn.model.entity.Article;
 import org.springframework.web.multipart.MultipartFile;
 
+
 public interface ArticleService extends PageableArticleService {
 
     Article findById(Long id);

@@ -1,5 +1,6 @@
 package com.itermit.learn.model.dto.request;
 
+import com.itermit.learn.model.dto.UserDto;
 import lombok.*;
 
 import java.time.Instant;
@@ -19,5 +20,5 @@ public class CreateArticleRequest {
     private String content;
     private Boolean visible;
     private Instant publishDate;
-    private Long authorId;
+    private UserDto author;
 }

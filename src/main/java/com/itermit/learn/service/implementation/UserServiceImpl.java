@@ -1,9 +1,8 @@
 package com.itermit.learn.service.implementation;
 
-import com.itermit.learn.exception.RoleNotFoundException;
+import com.itermit.learn.exception.ResourceNotFoundException;
 import com.itermit.learn.exception.UserAlreadyExistsException;
 import com.itermit.learn.exception.UserIncorrectException;
-import com.itermit.learn.exception.UserNotFoundException;
 import com.itermit.learn.model.ERole;
 import com.itermit.learn.model.dto.request.CreateUserRequest;
 import com.itermit.learn.model.dto.request.UpdatePasswordRequest;
@@ -22,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -35,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.*;
 
 import static java.util.Optional.ofNullable;
+
 
 @Slf4j
 @Service
@@ -53,7 +52,7 @@ public class UserServiceImpl implements UserService {
         log.debug("Looking for a user with id {}", id);
 
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("Requested resource not found (id = %s)"
+                .orElseThrow(() -> new ResourceNotFoundException("Requested resource not found (id = %s)"
                         .formatted(id)
                 ));
 
@@ -62,17 +61,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<User> findAll(Pageable pageable, String search) {
+    public Page<User> findAll(Pageable pageable, Map<String, String> params) {
         log.debug("Retrieving users. Page request: {}", pageable);
 
-        Page<User> users;
-        if (ofNullable(search).isEmpty() || search.equals("")) {
-            users = pageableUserRepository.findAll(pageable);
-        } else {
-            users = pageableUserRepository.findAll(
-                    Specification.where(UserSpecs.containsTextInName(search)),
-                    pageable);
-        }
+        Page<User> users = pageableUserRepository.findAll(UserSpecs.filter(params), pageable);
 
         log.info("Retrieved {} users of {} total", users.getSize(), users.getTotalElements());
         return users;
@@ -83,7 +75,7 @@ public class UserServiceImpl implements UserService {
         log.debug("Looking for a user with name {}", name);
         Optional<User> user = userRepository.findByUsername(name);
 
-        user.orElseThrow(() -> new UserNotFoundException(
+        user.orElseThrow(() -> new ResourceNotFoundException(
                 "Requested resource not found (name = %s)".formatted(name)
         ));
 
@@ -96,7 +88,7 @@ public class UserServiceImpl implements UserService {
         log.debug("Looking for a user with username {}", username);
         Optional<User> user = userRepository.findByUsername(username);
 
-        user.orElseThrow(() -> new UserNotFoundException(
+        user.orElseThrow(() -> new ResourceNotFoundException(
                 "Requested resource not found (username = %s)".formatted(username)
         ));
 
@@ -109,7 +101,7 @@ public class UserServiceImpl implements UserService {
         log.debug("Looking for a user with email {}", email);
         Optional<User> user = userRepository.findByUsername(email);
 
-        user.orElseThrow(() -> new UserNotFoundException(
+        user.orElseThrow(() -> new ResourceNotFoundException(
                 "Requested resource not found (email = %s)".formatted(email)
         ));
 
@@ -140,6 +132,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Transactional
     @Override
     public User update(UpdateUserRequest updateRequest) {
         log.debug("Updating user");
@@ -166,9 +159,6 @@ public class UserServiceImpl implements UserService {
                     ofNullable(profileRequest.getWebsite()).ifPresent(profile::setWebsite);
                     ofNullable(profileRequest.getDate()).ifPresent(profile::setDate);
                     ofNullable(profileRequest.getAvatar()).ifPresent(profile::setAvatar);
-                    profile.setId(user.getProfile().getId());
-                    user.clearLastUpdateDate();
-                    user.setProfile(profile);
                 }
         );
 
@@ -178,6 +168,7 @@ public class UserServiceImpl implements UserService {
         return updatedUser;
     }
 
+    @Transactional
     @Override
     public void updatePassword(UpdatePasswordRequest updateRequest) {
         log.debug("Updating user's password");
@@ -192,6 +183,7 @@ public class UserServiceImpl implements UserService {
         log.info("Password updated for user with id {}", updatedUser.getId());
     }
 
+    @Transactional
     @Override
     public String updateAvatar(Long id, MultipartFile avatar) {
         log.debug("Updating user's avatar");
@@ -255,17 +247,17 @@ public class UserServiceImpl implements UserService {
 
         if (ofNullable(strRoles).isEmpty()) {
             Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                    .orElseThrow(() -> new RoleNotFoundException("Error: Role USER is not found."));
+                    .orElseThrow(() -> new ResourceNotFoundException("Error: Role USER is not found."));
             roles.add(userRole);
         } else {
             strRoles.forEach(role -> {
-                if (role.equals("admin")) {
-                    throw new RoleNotFoundException("Role ADMIN cannot be assigned on registration.");
-                } else {
-                    Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                            .orElseThrow(() -> new RoleNotFoundException("Role USER is not found."));
+//                if (role.equals("ROLE_ADMIN")) {
+//                    throw new RoleNotFoundException("Role ADMIN cannot be assigned on registration.");
+//                } else {
+                    Role userRole = roleRepository.findByName(ERole.valueOf(role))
+                            .orElseThrow(() -> new ResourceNotFoundException("Role USER is not found."));
                     roles.add(userRole);
-                }
+//                }
             });
         }
 

@@ -3,6 +3,7 @@ package com.itermit.learn.model.dto.response;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+
 @Getter
 @RequiredArgsConstructor(staticName = "of")
 public class ErrorResponse {

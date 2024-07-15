@@ -8,6 +8,7 @@ import lombok.*;
 
 import java.util.Set;
 
+
 @Setter
 @Getter
 @Builder
@@ -38,5 +39,4 @@ public class User extends AuditableEntity {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "profile_id", referencedColumnName = "id")
     private Profile profile;
-
 }

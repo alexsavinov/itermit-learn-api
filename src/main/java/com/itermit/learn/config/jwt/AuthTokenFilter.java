@@ -18,6 +18,7 @@ import java.io.IOException;
 
 import static java.util.Optional.ofNullable;
 
+
 @Component
 public class AuthTokenFilter extends OncePerRequestFilter {
 

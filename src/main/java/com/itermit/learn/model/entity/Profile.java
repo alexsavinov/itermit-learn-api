@@ -1,9 +1,12 @@
 package com.itermit.learn.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.itermit.learn.model.EGender;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 
 @Setter
 @Getter
@@ -11,8 +14,10 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @Table(name = "profile")
+@EntityListeners(AuditingEntityListener.class)
 public class Profile {
 
     @Id
@@ -51,4 +56,11 @@ public class Profile {
     @Size(max = 100)
     private String avatar;
 
+    @OneToOne(mappedBy = "profile")
+    private User user;
+
+    @PreUpdate
+    protected void preUpdate() {
+        user.setLastUpdateDate();
+    }
 }

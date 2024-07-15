@@ -15,8 +15,11 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -34,19 +37,17 @@ public class UserController {
         UserDto userDto = userMapper.toDto(foundUser);
 
         userDto.add(linkTo(methodOn(UserController.class).getUserById(userDto.getId())).withSelfRel());
-        userDto.add(linkTo(methodOn(UserController.class).getUsers(null, null)).withRel("collection"));
         return userDto;
     }
 
     @GetMapping
     public PagedModel<UserDto> getUsers(
             Pageable pageable,
-            @RequestParam(required = false) String search) {
-        Page<User> foundUsers = userService.findAll(pageable, search);
+            @RequestParam(required = false) Map<String, String> params) {
+        Page<User> foundUsers = userService.findAll(pageable, params);
 
         return pagedResourcesAssembler.toModel(foundUsers, usersDto);
     }
-
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -55,7 +56,6 @@ public class UserController {
         UserDto userDto = userMapper.toDto(createdUser);
 
         userDto.add(linkTo(methodOn(UserController.class).addUser(createRequest)).withSelfRel());
-        userDto.add(linkTo(methodOn(UserController.class).getUsers(null, null)).withRel("collection"));
         return userDto;
     }
 
@@ -65,7 +65,6 @@ public class UserController {
         UserDto userDto = userMapper.toDto(updatedUser);
 
         userDto.add(linkTo(methodOn(UserController.class).updateUser(updateRequest)).withSelfRel());
-        userDto.add(linkTo(methodOn(UserController.class).getUsers(null, null)).withRel("collection"));
         return userDto;
     }
 

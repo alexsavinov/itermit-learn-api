@@ -26,5 +26,5 @@ app:
   publicPath: "/src/main/resources/public/"
   avatarImagePath: "images/avatars"
   articleImagePath: "images/articles"
-
+  quizImagePath: "images/quizzes"
 

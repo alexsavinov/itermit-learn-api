@@ -6,6 +6,7 @@ import com.itermit.learn.model.dto.request.UpdateUserRequest;
 import com.itermit.learn.model.entity.User;
 import org.springframework.web.multipart.MultipartFile;
 
+
 public interface UserService extends PageableUserService {
 
     User findById(Long id);

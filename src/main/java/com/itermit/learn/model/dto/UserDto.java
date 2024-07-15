@@ -1,5 +1,6 @@
 package com.itermit.learn.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.itermit.learn.model.entity.Profile;
 import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
@@ -13,6 +14,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Relation(itemRelation = "user", collectionRelation = "users")
 public class UserDto extends RepresentationModel<UserDto> {
 
